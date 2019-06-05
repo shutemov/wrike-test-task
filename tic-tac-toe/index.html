@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>XO</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <script src="https://kit.fontawesome.com/5c58c1fd4e.js"></script>
+</head>
+
+<body>
+    <div class="container col-9" id="mainContainer">
+        <div class="col-12" style="text-align: center;">
+            <h1>TIC TAC TOE</h1>
+        </div>
+        <div class="col-12 map" style="margin-top: 3%;" id="delegate">
+            <div class="row" style="justify-content: center;position: relative;">
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f1"></div>
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f2"></div>
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f3"></div>
+            </div>
+            <div class="row" style="justify-content: center;">
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f4"></div>
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f5"></div>
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f6"></div>
+            </div>
+            <div class="row" style="justify-content: center;">
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f7"></div>
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f8"></div>
+                <div class="col-2 fields" style="height: 150px;border: 1px solid;text-align: center;font-size: 6em;" align="center" id="f9"></div>
+            </div>
+        </div>
+    </div>
+    
+ 
+</body>
+<script type="text/javascript">
+
+
+function Player(point) {
+
+    this.point = point; // X or O
+
+    this.setPoint = function(map, field, point) {
+        map.setState(field, point)
+    }
+}
+
+
+
+function Map() {
+
+	var body = document.querySelector('body')
+	var mainContainer = document.querySelector('#mainContainer')
+
+    this.map = document.querySelectorAll('.fields')
+
+    this.setState = function(field, point) {
+        if (field.textContent == "") {
+            field.innerHTML = point
+            field.style.backgroundColor = "lightgreen"
+        } else {
+            return "This field closed by " + field.textContent
+        }
+    }
+
+
+    this.isWinCombination = function() {
+
+
+        function CheckX(e) {
+            return e.textContent == "X"
+        }
+
+        function CheckO(e) {
+            return e.textContent == "O"
+        }
+
+        //width the map (3 fields)
+        var map = this.map
+        var mapWidth = Math.sqrt(map.length)
+
+        //horizontal check comb
+        for (var i = 0; i < map.length; i += mapWidth) {
+
+            var horizontalSlice = Array.from(map).slice(i, i + mapWidth)
+
+            if (horizontalSlice.every(CheckX) || horizontalSlice.every(CheckO)) {
+                return true;
+            }
+
+        }
+
+        //vertical check comb
+        for (var i = 0; i < mapWidth; i++) {
+            var buf = []
+
+            // push to buf vertical fields
+            for (var j = 0; j < map.length; j += mapWidth) {
+
+                buf[buf.length] = map[i + j]
+            }
+
+            if (buf.every(CheckX) || buf.every(CheckO)) {
+                return true
+            };
+        }
+
+        //  \ diagonal check comb
+        var buf = []
+
+        for (var i = 0; i < map.length; i += (mapWidth + 1)) {
+            buf[buf.length] = map[i]
+        }
+
+        if (buf.every(CheckX) || buf.every(CheckO)) {
+            return true
+        };
+
+
+        //  / diagonal check comb
+        var buf = []
+
+        for (var i = mapWidth - 1; i < map.length - 1; i += (mapWidth - 1)) {
+            console.log(i)
+            buf[buf.length] = map[i]
+        }
+
+        if (buf.every(CheckX) || buf.every(CheckO)) {
+            return true
+        };
+    }
+}
+
+
+
+function Game() {
+
+    var player1 = new Player("X")
+    var player2 = new Player("O")
+    var map = new Map()
+
+    var switchTurnTo = undefined; //value = player1.point || player2.point
+
+    this.start = function() {
+
+
+        switchTurnTo = player1.point
+
+
+        document.addEventListener('click', e => {
+
+            let field = e.target
+
+            if (switchTurnTo == player1.point && field.className == "col-2 fields") {
+                player1.setPoint(map, field, player1.point)
+                // map.isWinCombination() ? alert("WIN:player1") : switchTurnTo = player2.point
+                if (map.isWinCombination()) {
+                    alert("WIN:player1")
+                    result = confirm("lets play again?");
+                    if (result) {
+                        window.location.reload();
+                    }
+                } else {
+                    switchTurnTo = player2.point
+                }
+
+            } else if (switchTurnTo == player2.point && field.className == "col-2 fields") {
+                player2.setPoint(map, field, player2.point)
+                if (map.isWinCombination()) {
+                    alert("WIN:player2")
+                    result = confirm("lets play again?");
+                    if (result) {
+                        window.location.reload();
+                    }
+                } else {
+                    switchTurnTo = player1.point
+                }
+
+            }
+        })
+    }
+}
+
+var game = new Game();
+game.start()
+</script>
+<script src="https://kit.fontawesome.com/5c58c1fd4e.js"></script>
+<script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</html>

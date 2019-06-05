@@ -1,4 +1,6 @@
 # wrike-test-task
-В папке binary-search-with-tests содержится функция бинарного поиска чисел и jest тесты к ней. <br>
-Для запуска необходимо ввести команду:<br>
+## Реализация бинарного поиска и jest тесты к нему.
+В папке binary-search-with-tests необходимо ввести команду:<br>
 *npm install && npm run test*
+## Реализация игры крестики нолики.
+Index.html в папке tic-tac-toe.
